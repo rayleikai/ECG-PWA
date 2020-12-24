@@ -1,0 +1,15 @@
+{
+  "name": "Run Forrest",
+  "short_name": "Run Forrest",
+  "start_url": "https://elercraft.github.io/ECG",
+  "background_color": "#343a40",
+  "theme_color": "#343a40",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "images/muscle.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
