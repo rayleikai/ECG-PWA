@@ -1,0 +1,97 @@
+body {
+    background-color: var(--dark);
+    /* for course tab, content overflow */
+}
+
+.ui.tab {
+    height: 100%;
+    background-color: var(--dark);
+}
+
+/* index page */
+.ui.placeholder.segment {
+    background-color: transparent;
+    height: 100%;
+}
+
+.ui.medium.centered.image {
+    border: none;
+}
+
+/* profile page */
+.ui.one.column.grid {
+    height: 100%;
+    margin: 0px;
+}
+
+.ui.one.column.grid {
+    padding-bottom: 2rem;
+    /* the card will be ACTUALLY in the middle on cellphone */
+}
+
+
+/* course page */
+.ui.centered.grid {
+    margin: 0px;
+    padding: 0.5rem 0px 3rem 0px;
+}
+
+/* segment & item merge */
+.ui.item.segment {
+    background: #bcbec0;
+    position: relative;
+    box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
+    margin: 1rem 0;
+    padding: 1em;
+    border-radius: 0.25rem;
+}
+
+.basketball {
+    color: #EA7500;
+}
+
+.football {
+    color: #AE0000;
+}
+
+.volleyball {
+    color: #F0F0F0;
+}
+
+.bowling {
+    color: #0000C6;
+}
+
+.ui.item.segment:nth-child(1)>.content>.extra>.label {
+    background-color: var(--danger);
+}
+
+.ui.item.segment:nth-child(2)>.content>.extra>.label {
+    background-color: var(--success);
+}
+
+.ui.item.segment:nth-child(3)>.content>.extra>.label {
+    background-color: var(--gray);
+}
+
+.ui.item.segment:nth-child(4)>.content>.extra>.label {
+    background-color: var(--warning);
+}
+
+.ui.item.segment:nth-child(5)>.content>.extra>.label {
+    background-color: var(--info);
+}
+
+/* bottom button */
+.ui.three.item.menu.tabs {
+    background-color: var(--dark);
+}
+
+.ui.three.item.menu.tabs>.item:nth-child(1)>b {
+    color: var(--danger);
+}
+
+.ui.three.item.menu.tabs>.item:nth-child(2)>b,
+.ui.three.item.menu.tabs>.item:nth-child(3)>b {
+    color: var(--secondary);
+}
