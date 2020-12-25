@@ -1,0 +1,13 @@
+/*宣告datasheet[200]
+input data_array[20]*/
+
+if(datasheet[199]==0){
+    for(let i=0; i<datasheet.length; i+=20)
+        for(let j=0; j<data_array.length; j++)
+            datasheet[i+j]=data_array[j];
+else
+    for(let i=0; i<datasheet.length-20; i++)
+        datasheet[i]=datasheet[i+20];
+        for(let j=0; j<data_array.length; j++)
+            datasheet[180+j]=data_array[j];
+}
