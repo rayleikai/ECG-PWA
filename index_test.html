@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#343a40">
+    <title>Run Forrest</title>
+
+    <!--manifest.json-->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- supprot iOS icon-->
+    <link rel="apple-touch-icon" href="images/muscle.png">
+
+    <!--computer tab icon-->
+    <link rel="icon" type="image/png" href="images/muscle.png">
+
+    <!--sematic ui CSS-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+        integrity="sha512-8bHTC73gkZ7rZ7vpqUQThUDhqcNFyYi2xgDgPDHc+GXVGHXq+xPjynxIopALmOPqzo9JZj0k6OqqewdGO3EsrQ=="
+        crossorigin="anonymous" />
+
+    <!--bootstrap CSS-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    
+    <!--ChartJS-->
+    <link rel="javascript" href="https://www.jsdelivr.com/package/npm/chart.js?path=dist">
+
+    <!--custom CSS-->
+    <style>
+        body {
+            background-color: var(--dark);
+            /* for course tab, content overflow */
+        }
+
+        .ui.tab {
+            height: 100%;
+            background-color: var(--dark);
+        }
+
+        /* index page */
+        .column.middle.aligned>.container>div:nth-child(1) {
+            height: 160px;
+            /* prevent the data div below from moving due to the animation */
+        }
+
+        .column.middle.aligned>.container>div:nth-child(2) {
+            text-align: center;
+        }
+
+        .ui.button {
+            margin: 4rem 0px 4rem 0px;
+        }
+        /* ChartJS Graphing */
+        #myChart{
+            margin: auto;
+            margin-top: 50px;
+            background: white;
+            display: block;
+        }
+
+        /* profile page */
+        .ui.one.column.grid {
+            height: 100%;
+            margin: 0px;
+            padding-bottom: 4rem;
+            /* the card will be ACTUALLY in the middle on cellphone */
+        }
+
+        /* course page */
+        /* this also apply to index page */
+        .ui.centered.grid {
+            margin: 0px;
+            padding: 0.5rem 0px 3rem 0px;
+        }
+
+        /* segment & item merge */
+        .ui.item.segment {
+            background: #bcbec0;
+            position: relative;
+            box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
+            margin: 1rem 0;
+            padding: 1em;
+            border-radius: 0.25rem;
+        }
+
+        .basketball {
+            color: #EA7500;
+        }
+
+        .football {
+            color: #AE0000;
+        }
+
+        .volleyball {
+            color: #F0F0F0;
+        }
+
+        .bowling {
+            color: #0000C6;
+        }
+
+        .ui.item.segment:nth-child(1)>.content>.extra>.label {
+            background-color: var(--danger);
+        }
+
+        .ui.item.segment:nth-child(2)>.content>.extra>.label {
+            background-color: var(--success);
+        }
+
+        .ui.item.segment:nth-child(3)>.content>.extra>.label {
+            background-color: var(--gray);
+        }
+
+        .ui.item.segment:nth-child(4)>.content>.extra>.label {
+            background-color: var(--warning);
+        }
+
+        .ui.item.segment:nth-child(5)>.content>.extra>.label {
+            background-color: var(--info);
+        }
+
+        /* bottom button */
+        .ui.four.item.menu.tabs {
+            background-color: var(--dark);
+        }
+
+        .ui.four.item.menu.tabs>.item:nth-child(1)>b {
+            color: var(--danger);
+        }
+
+        .ui.four.item.menu.tabs>.item:nth-child(2)>b,
+        .ui.four.item.menu.tabs>.item:nth-child(3)>b,
+        .ui.four.item.menu.tabs>.item:nth-child(4)>b {
+            color: var(--secondary);
+        }
+    </style>
+
+<!-- Source of ChartJS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+</head>
+
+<body>
+    
+    <div class="ui tab active" data-tab="profile">
+        <div class="ui one column grid">
+            <div class="column middle aligned">
+                <div class="ui centered card">
+                    <div class="image">
+                        <img src="https://semantic-ui.com/images/avatar2/large/matthew.png">
+                    </div>
+                    <div class="content">
+                        <h1 class="ui header">John</h1>
+                        <div class="meta">
+                            <span class="date">Joined in 2020</span>
+                        </div>
+                        <div class="description">
+                            <b>
+                                <p>&ensp;&ensp;Height : 100 cm</p>
+                                <p>&ensp;&ensp;Weight : 100 kg</p>
+                                <p>&ensp;&ensp;Gender : Male</p>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui tab" data-tab="index">
+        <div class="ui one column grid">
+            <div class="column middle aligned">
+                <div class="container">
+                    <div style="display: flex; justify-content: center;">
+                        <canvas id='canvas'></canvas>
+                    </div>
+                    <div>
+
+                        <button class="ui blue basic button">Scan</button>
+                        <button onclick="RUN()" class="ui green basic button">Connect</button>
+                        <button onclick="STOP()" class="ui red basic button">Stop</button>
+
+                        <div id="bluetooth_data" class="ui huge header" style="color:whitesmoke">Data</div>
+                        <!-- setting the graphing size -->
+                        <canvas id="myChart" width="350px" height="300px"></canvas>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="ui tab" data-tab="course">
+        <div class="ui centered grid">
+            <div class="fifteen wide column">
+                <div class="ui sequenced unstackable items">
+                    <div class="ui item segment transition hidden">
+                        <div class="centered image">
+                            <i class="bordered huge basketball ball icon"></i>
+                        </div>
+                        <div class="content">
+                            <h1 class="header">Basketball Class</h1>
+                            <div class="description">
+                                <b>Price : $1000</b>
+                            </div>
+                            <div class="extra">
+                                <div class="ui label">Advanced</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui item segment transition hidden">
+                        <div class="image">
+                            <i class="bordered huge football ball icon"></i>
+                        </div>
+                        <div class="content">
+                            <h1 class="header">Football Class</h1>
+                            <div class="description">
+                                <b>Price : $1000</b>
+                            </div>
+                            <div class="extra">
+                                <div class="ui label">Limited</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui item segment transition hidden">
+                        <div class="image">
+                            <i class="bordered huge volleyball ball icon"></i>
+                        </div>
+                        <div class="content">
+                            <h1 class="header">Volleyball Class</h1>
+                            <div class="description">
+                                <b>Price : $1000</b>
+                            </div>
+                            <div class="extra">
+                                <div class="ui label">Beginner</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui item segment transition hidden">
+                        <div class="image">
+                            <i class="bordered huge bowling ball icon"></i>
+                        </div>
+                        <div class="content">
+                            <h1 class="header">Bowling Class</h1>
+                            <div class="description">
+                                <b>Price : $1000</b>
+                            </div>
+                            <div class="extra">
+                                <div class="ui label">Premium</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui item segment transition hidden">
+                        <div class="image">
+                            <i class="bordered huge table tennis icon"></i>
+                        </div>
+                        <div class="content">
+                            <h1 class="header">Table Tennis</h1>
+                            <div class="description">
+                                <b>Price : $1000</b>
+                            </div>
+                            <div class="extra">
+                                <div class="ui label">1 to 1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui tab" data-tab="Login">
+        <div class="ui one column grid">
+            <div class="column middle aligned">
+                <div class="container">
+                    <div style="display: flex; justify-content: center;">
+                        <div>
+                            <p style="color: white; font-size: 16px">帳號</p>
+                            <input>
+                            <p style="color: white; font-size: 16px">密碼</p>
+                            <input>
+                            <p style="color: white; text-decoration:underline; text-align:center;">忘記密碼? / 登入說明?</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="ui basic button; color: white">Login</button>
+                        <p style="color: white">-----------------------------</p>
+                        <p style="color: white; font-size: 18px">Login with</p>
+                        <i class="huge google icon" style="color:rgb(219, 68, 55)"></i>
+                        <i class="huge twitter icon" style="color:rgb(29, 161, 242)"></i>
+                        <i class="huge facebook icon" style="color:rgb(66, 103, 178)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--bottom navbar-->
+    <div class="fixed-bottom">
+        <!--ui four item labeled icon menu tabs-->
+        <div class="ui four item menu tabs">
+            <a class="item active" data-tab="profile" href="#">
+                <i class="address book icon red"></i>
+                <b>Profile</b>
+            </a>
+            <a class="item" data-tab="index" href="#">
+                <i class="home icon grey"></i>
+                <b>Home</b>
+            </a>
+            <a class="item" data-tab="course" href="#">
+                <i class="file alternate icon grey"></i>
+                <b>Course</b>
+            </a>
+            <a class="item" data-tab="Login" href="#">
+                <i class="user icon grey"></i>
+                <b>Login</b>
+            </a>
+        </div>
+    </div>
+
+    <!--jQuery-->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+    <!--register sw.js-->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then((reg) => console.log('service worker registered', reg))
+                .catch((err) => console.log('service worker not registered', err))
+        }
+    </script>
+
+    <!--semantic ui JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"
+        integrity="sha512-dqw6X88iGgZlTsONxZK9ePmJEFrmHwpuMrsUChjAw1mRUhUITE5QU9pkcSox+ynfLhL15Sv2al5A0LVyDCmtUw=="
+        crossorigin="anonymous"></script>
+
+    <!--custom JS-->
+    <script>
+        // image info
+        const imgWidth = 5280;
+        const imgHeight = 179;
+        const frameNum = 40;
+        const frameWidth = imgWidth / frameNum;
+        const frameHeight = imgHeight;
+
+        //image control
+        let currentFrame = 0;
+        let srcX = 0;
+        const srcY = 0;
+        let running = 0;
+
+        //canvas setting
+        var canvas = document.getElementById('canvas');
+        canvas.width = frameWidth;
+        canvas.height = frameHeight;
+        var ctx = canvas.getContext("2d");
+
+        //character image
+        var character = new Image();
+        character.src = "images/runner.png";
+
+        function updateFrame() {
+            currentFrame = ++currentFrame % frameNum;
+            srcX = currentFrame * frameWidth;
+            ctx.clearRect(0, 0, frameWidth, frameHeight);
+        }
+
+        function draw() {
+            updateFrame();
+            ctx.drawImage(character, srcX, srcY, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+        }
+
+        function RUN() {
+            if (running === 0) {
+                running = setInterval(draw, 20);
+            }
+        }
+
+        function STOP() {
+            clearInterval(running);
+            running = 0;
+            ctx.clearRect(0, 0, frameWidth, frameHeight);
+            ctx.drawImage(character, 0 * frameWidth, srcY, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+
+        }
+
+
+        //character.onload = RUN();
+        character.onload = function () {
+            ctx.drawImage(character, 0 * frameWidth, srcY, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+        }
+
+        /* bottom navbar control */
+        $(".ui.four.tabs>.item").on("click", function () {
+            let previous = $(this).parent().find(".active").attr("data-tab");
+            let next = $(this).attr("data-tab");
+            if (previous === next) {
+                return;
+            }
+
+            /*disable previous page*/
+            $(`[data-tab = ${previous}]`).removeClass("active");
+            $(`[data-tab = ${previous}] > .icon`).removeClass("red").addClass("grey");
+            $(`[data-tab = ${previous}] > b`)[0].style.color = "var(--secondary)";
+
+            /*set next page active*/
+            $(`[data-tab = ${next}]`).addClass("active");
+            $(`[data-tab = ${next}] > .icon`).removeClass("grey").addClass("red");
+            $(`[data-tab = ${next}] > b`)[0].style.color = "var(--danger)";
+
+            /* course page animation */
+            if (next === "course") {
+                $(".ui.item.segment").transition('hide');
+                $('.ui.sequenced.unstackable.items .ui.item.segment').transition({
+                    animation: 'scale',
+                    reverse: 'auto', // default setting
+                    interval: 120
+                });
+            }
+        });
+
+        /* bluetooth */
+        function AVE(arr) {
+            let sum = 0;
+            for (let i = 0; i < arr.length; i++) {
+                sum += arr[i];
+            }
+            return sum / arr.length;
+        }
+
+        function MAX(arr) {
+            let max = 0;
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] > max){
+                    max = arr[i];
+                }
+            }
+            return max;
+        }
+
+        let curretDevice = "";
+
+        $(".button").click(ble);
+
+        function ble(e) {
+            console.log(`${e.target.innerHTML} 被點擊`);
+
+            switch (e.target.innerHTML) {
+                case "Scan":
+                    scan();
+                    break;
+                case "Connect":
+                    connect(currentDevice);
+                    break;
+                case "Stop":
+                    stop(currentDevice);
+                    break;
+                default:
+                    console.log("oops ....");
+            }
+        }
+
+        function scan() {
+            navigator.bluetooth.requestDevice({
+                optionalServices: ['0000ff04-0000-1000-8000-00805f9b34fb'], /*'00001523-1212-efde-1523-785feabcd123'*/
+                acceptAllDevices: true
+            }).then(device => {
+                console.log(`選了${device.name}`);
+                currentDevice = device;
+                console.log(currentDevice);
+                console.log(`UUID : ${currentDevice.uuids}`);
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+
+        function connect(dev) {
+            dev.gatt.connect()
+                .then(server => {
+                    console.log(`server : ${server}`);
+                    return server.getPrimaryService('0000ff04-0000-1000-8000-00805f9b34fb');
+                })
+                .then(service => {
+                    console.log(`service : ${service}`);
+                    return service.getCharacteristic('0000aa04-0000-1000-8000-00805f9b34fb');
+                })
+                .then(chara => {
+                    console.log(`chara : ${chara}`);
+                    chara.startNotifications().then(c => {
+                        c.addEventListener('characteristicvaluechanged', function (e) {
+                            console.log(this.value.buffer);
+                            //在網頁上印出data
+                            let data_array = Array.from(new Uint8Array(this.value.buffer));
+                            let ave = AVE(data_array);
+                            document.getElementById('bluetooth_data').innerHTML = data_array + "<br>" + "maximum = " + MAX(data_array);
+                        });
+
+                    })
+                })
+                .catch(error => { console.log(error); });
+        }
+
+        function stop(dev) {
+            dev.gatt.disconnect();
+            console.log(`${dev.name}已斷線`);
+        }
+
+    </script>
+    <script src="sw.js"></script>
+
+</body>
+
+<script>
+    var data = [
+        {"Time": "0.025", "Voltage": datasheet[0]},
+        {"Time": "0.05", "Voltage": datasheet[1]},
+        {"Time": "0.075", "Voltage": datasheet[2]},
+        {"Time": "0.1", "Voltage": datasheet[3]},
+        {"Time": "0.125", "Voltage": datasheet[4]},
+        {"Time": "0.15", "Voltage": datasheet[5]},
+        {"Time": "0.175", "Voltage": datasheet[6]},
+        {"Time": "0.2", "Voltage": datasheet[7]},
+        {"Time": "0.225", "Voltage": datasheet[8]},
+        {"Time": "0.25", "Voltage": datasheet[9]},
+        {"Time": "0.275", "Voltage": datasheet[10]},
+        {"Time": "0.3", "Voltage": datasheet[11]},
+        {"Time": "0.325", "Voltage": datasheet[12]},
+        {"Time": "0.35", "Voltage": datasheet[13]},
+        {"Time": "0.375", "Voltage": datasheet[14]},
+        {"Time": "0.4", "Voltage": datasheet[15]},
+        {"Time": "0.425", "Voltage": datasheet[16]},
+        {"Time": "0.45", "Voltage": datasheet[17]},
+        {"Time": "0.475", "Voltage": datasheet[18]},
+        {"Time": "0.5", "Voltage": datasheet[19]},
+        {"Time": "0.525", "Voltage": datasheet[20]},
+        {"Time": "0.55", "Voltage": datasheet[21]},
+        {"Time": "0.575", "Voltage": datasheet[22]},
+        {"Time": "0.6", "Voltage": datasheet[23]},
+        {"Time": "0.625", "Voltage": datasheet[24]},
+        {"Time": "0.65", "Voltage": datasheet[25]},
+        {"Time": "0.675", "Voltage": datasheet[26]},
+        {"Time": "0.7", "Voltage": datasheet[27]},
+        {"Time": "0.725", "Voltage": datasheet[28]},
+        {"Time": "0.75", "Voltage": datasheet[29]},
+        {"Time": "0.775", "Voltage": datasheet[30]},
+        {"Time": "0.8", "Voltage": datasheet[31]},
+        {"Time": "0.825", "Voltage": datasheet[32]},
+        {"Time": "0.85", "Voltage": datasheet[33]},
+        {"Time": "0.875", "Voltage": datasheet[34]},
+        {"Time": "0.9", "Voltage": datasheet[35]},
+        {"Time": "0.925", "Voltage": datasheet[36]},
+        {"Time": "0.95", "Voltage": datasheet[37]},
+        {"Time": "0.975", "Voltage": datasheet[38]},
+        {"Time": "1", "Voltage": datasheet[39]},
+        {"Time": "1.025", "Voltage": datasheet[40]},
+        {"Time": "1.05", "Voltage": datasheet[41]},
+        {"Time": "1.075", "Voltage": datasheet[42]},
+        {"Time": "1.1", "Voltage": datasheet[43]},
+        {"Time": "1.125", "Voltage": datasheet[44]},
+        {"Time": "1.15", "Voltage": datasheet[45]},
+        {"Time": "1.175", "Voltage": datasheet[46]},
+        {"Time": "1.2", "Voltage": datasheet[47]},
+        {"Time": "1.225", "Voltage": datasheet[48]},
+        {"Time": "1.25", "Voltage": datasheet[49]},
+        {"Time": "1.275", "Voltage": datasheet[50]},
+        {"Time": "1.3", "Voltage": datasheet[51]},
+        {"Time": "1.325", "Voltage": datasheet[52]},
+        {"Time": "1.35", "Voltage": datasheet[53]},
+        {"Time": "1.375", "Voltage": datasheet[54]},
+        {"Time": "1.4", "Voltage": datasheet[55]},
+        {"Time": "1.425", "Voltage": datasheet[56]},
+        {"Time": "1.45", "Voltage": datasheet[57]},
+        {"Time": "1.475", "Voltage": datasheet[58]},
+        {"Time": "1.5", "Voltage": datasheet[59]},
+        {"Time": "1.525", "Voltage": datasheet[60]},
+        {"Time": "1.55", "Voltage": datasheet[61]},
+        {"Time": "1.575", "Voltage": datasheet[62]},
+        {"Time": "1.6", "Voltage": datasheet[63]},
+        {"Time": "1.625", "Voltage": datasheet[64]},
+        {"Time": "1.65", "Voltage": datasheet[65]},
+        {"Time": "1.675", "Voltage": datasheet[66]},
+        {"Time": "1.7", "Voltage": datasheet[67]},
+        {"Time": "1.725", "Voltage": datasheet[68]},
+        {"Time": "1.75", "Voltage": datasheet[69]},
+        {"Time": "1.775", "Voltage": datasheet[70]},
+        {"Time": "1.8", "Voltage": datasheet[71]},
+        {"Time": "1.825", "Voltage": datasheet[72]},
+        {"Time": "1.85", "Voltage": datasheet[73]},
+        {"Time": "1.875", "Voltage": datasheet[74]},
+        {"Time": "1.9", "Voltage": datasheet[75]},
+        {"Time": "1.925", "Voltage": datasheet[76]},
+        {"Time": "1.95", "Voltage": datasheet[77]},
+        {"Time": "1.975", "Voltage": datasheet[78]},
+        {"Time": "2", "Voltage": datasheet[79]},
+        {"Time": "2.025", "Voltage": datasheet[80]},
+        {"Time": "2.05", "Voltage": datasheet[81]},
+        {"Time": "2.075", "Voltage": datasheet[82]},
+        {"Time": "2.1", "Voltage": datasheet[83]},
+        {"Time": "2.125", "Voltage": datasheet[84]},
+        {"Time": "2.15", "Voltage": datasheet[85]},
+        {"Time": "2.175", "Voltage": datasheet[86]},
+        {"Time": "2.2", "Voltage": datasheet[87]},
+        {"Time": "2.225", "Voltage": datasheet[88]},
+        {"Time": "2.25", "Voltage": datasheet[89]},
+        {"Time": "2.275", "Voltage": datasheet[90]},
+        {"Time": "2.3", "Voltage": datasheet[91]},
+        {"Time": "2.325", "Voltage": datasheet[92]},
+        {"Time": "2.35", "Voltage": datasheet[93]},
+        {"Time": "2.375", "Voltage": datasheet[94]},
+        {"Time": "2.4", "Voltage": datasheet[95]},
+        {"Time": "2.425", "Voltage": datasheet[96]},
+        {"Time": "2.45", "Voltage": datasheet[97]},
+        {"Time": "2.475", "Voltage": datasheet[98]},
+        {"Time": "2.5", "Voltage": datasheet[99]},
+        {"Time": "2.525", "Voltage": datasheet[100]},
+        {"Time": "2.55", "Voltage": datasheet[101]},
+        {"Time": "2.575", "Voltage": datasheet[102]},
+        {"Time": "2.6", "Voltage": datasheet[103]},
+        {"Time": "2.625", "Voltage": datasheet[104]},
+        {"Time": "2.65", "Voltage": datasheet[105]},
+        {"Time": "2.675", "Voltage": datasheet[106]},
+        {"Time": "2.7", "Voltage": datasheet[107]},
+        {"Time": "2.725", "Voltage": datasheet[108]},
+        {"Time": "2.75", "Voltage": datasheet[109]},
+        {"Time": "2.775", "Voltage": datasheet[110]},
+        {"Time": "2.8", "Voltage": datasheet[111]},
+        {"Time": "2.825", "Voltage": datasheet[112]},
+        {"Time": "2.85", "Voltage": datasheet[113]},
+        {"Time": "2.875", "Voltage": datasheet[114]},
+        {"Time": "2.9", "Voltage": datasheet[115]},
+        {"Time": "2.925", "Voltage": datasheet[116]},
+        {"Time": "2.95", "Voltage": datasheet[117]},
+        {"Time": "2.975", "Voltage": datasheet[118]},
+        {"Time": "3", "Voltage": datasheet[119]},
+        {"Time": "3.025", "Voltage": datasheet[120]},
+        {"Time": "3.05", "Voltage": datasheet[121]},
+        {"Time": "3.075", "Voltage": datasheet[122]},
+        {"Time": "3.1", "Voltage": datasheet[123]},
+        {"Time": "3.125", "Voltage": datasheet[124]},
+        {"Time": "3.15", "Voltage": datasheet[125]},
+        {"Time": "3.175", "Voltage": datasheet[126]},
+        {"Time": "3.2", "Voltage": datasheet[127]},
+        {"Time": "3.225", "Voltage": datasheet[128]},
+        {"Time": "3.25", "Voltage": datasheet[129]},
+        {"Time": "3.275", "Voltage": datasheet[130]},
+        {"Time": "3.3", "Voltage": datasheet[131]},
+        {"Time": "3.325", "Voltage": datasheet[132]},
+        {"Time": "3.35", "Voltage": datasheet[133]},
+        {"Time": "3.375", "Voltage": datasheet[134]},
+        {"Time": "3.4", "Voltage": datasheet[135]},
+        {"Time": "3.425", "Voltage": datasheet[136]},
+        {"Time": "3.45", "Voltage": datasheet[137]},
+        {"Time": "3.475", "Voltage": datasheet[138]},
+        {"Time": "3.5", "Voltage": datasheet[139]},
+        {"Time": "3.525", "Voltage": datasheet[140]},
+        {"Time": "3.55", "Voltage": datasheet[141]},
+        {"Time": "3.575", "Voltage": datasheet[142]},
+        {"Time": "3.6", "Voltage": datasheet[143]},
+        {"Time": "3.625", "Voltage": datasheet[144]},
+        {"Time": "3.65", "Voltage": datasheet[145]},
+        {"Time": "3.675", "Voltage": datasheet[146]},
+        {"Time": "3.7", "Voltage": datasheet[147]},
+        {"Time": "3.725", "Voltage": datasheet[148]},
+        {"Time": "3.75", "Voltage": datasheet[149]},
+        {"Time": "3.775", "Voltage": datasheet[150]},
+        {"Time": "3.8", "Voltage": datasheet[151]},
+        {"Time": "3.825", "Voltage": datasheet[152]},
+        {"Time": "3.85", "Voltage": datasheet[153]},
+        {"Time": "3.875", "Voltage": datasheet[154]},
+        {"Time": "3.9", "Voltage": datasheet[155]},
+        {"Time": "3.925", "Voltage": datasheet[156]},
+        {"Time": "3.95", "Voltage": datasheet[157]},
+        {"Time": "3.975", "Voltage": datasheet[158]},
+        {"Time": "4", "Voltage": datasheet[159]},
+        {"Time": "4.025", "Voltage": datasheet[160]},
+        {"Time": "4.05", "Voltage": datasheet[161]},
+        {"Time": "4.075", "Voltage": datasheet[162]},
+        {"Time": "4.1", "Voltage": datasheet[163]},
+        {"Time": "4.125", "Voltage": datasheet[164]},
+        {"Time": "4.15", "Voltage": datasheet[165]},
+        {"Time": "4.175", "Voltage": datasheet[166]},
+        {"Time": "4.2", "Voltage": datasheet[167]},
+        {"Time": "4.225", "Voltage": datasheet[168]},
+        {"Time": "4.25", "Voltage": datasheet[169]},
+        {"Time": "4.275", "Voltage": datasheet[170]},
+        {"Time": "4.3", "Voltage": datasheet[171]},
+        {"Time": "4.325", "Voltage": datasheet[172]},
+        {"Time": "4.35", "Voltage": datasheet[173]},
+        {"Time": "4.375", "Voltage": datasheet[174]},
+        {"Time": "4.4", "Voltage": datasheet[175]},
+        {"Time": "4.425", "Voltage": datasheet[176]},
+        {"Time": "4.45", "Voltage": datasheet[177]},
+        {"Time": "4.475", "Voltage": datasheet[178]},
+        {"Time": "4.5", "Voltage": datasheet[179]},
+        {"Time": "4.525", "Voltage": datasheet[180]},
+        {"Time": "4.55", "Voltage": datasheet[181]},
+        {"Time": "4.575", "Voltage": datasheet[182]},
+        {"Time": "4.6", "Voltage": datasheet[183]},
+        {"Time": "4.625", "Voltage": datasheet[184]},
+        {"Time": "4.65", "Voltage": datasheet[185]},
+        {"Time": "4.675", "Voltage": datasheet[186]},
+        {"Time": "4.7", "Voltage": datasheet[187]},
+        {"Time": "4.725", "Voltage": datasheet[188]},
+        {"Time": "4.75", "Voltage": datasheet[189]},
+        {"Time": "4.775", "Voltage": datasheet[190]},
+        {"Time": "4.8", "Voltage": datasheet[191]},
+        {"Time": "4.825", "Voltage": datasheet[192]},
+        {"Time": "4.85", "Voltage": datasheet[193]},
+        {"Time": "4.875", "Voltage": datasheet[194]},
+        {"Time": "4.9", "Voltage": datasheet[195]},
+        {"Time": "4.925", "Voltage": datasheet[196]},
+        {"Time": "4.95", "Voltage": datasheet[197]},
+        {"Time": "4.975", "Voltage": datasheet[198]},
+        {"Time": "5", "Voltage": datasheet[199]}];
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(x=>x.Time.slice(11, 16)),   //not sure x.Time.slice(11, 16)
+        datasets: [{
+          label: '心電壓',
+          data: data.map(x=>x.Voltage),
+          // Line
+          lineTension: 0,
+          backgroundColor: '#FF5376',
+          borderColor: '#FF5376',
+          fill: false,
+          borderWidth: 2,
+          // Point
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        }]
+      },
+      options:{
+        title:{
+          display: true,
+          text: 'Heart Voltage versus time',
+          position: 'top',
+          fontSize: 24,
+          fontStyle: 'normal',
+          fontFamily: 'Century Gothic'
+        },
+        legend:{
+          display: false
+        },
+        responsive: false
+      }
+    });
+</script>
+</html>
